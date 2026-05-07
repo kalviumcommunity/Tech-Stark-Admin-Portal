@@ -35,17 +35,18 @@ import { IMAGES, MOCK_STUDENTS } from './constants';
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
+  const [students] = useState<Student[]>(MOCK_STUDENTS);
 
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <DashboardView onAddStudent={() => setCurrentView('add-student')} onViewStudents={() => setCurrentView('students')} />;
+        return <DashboardView students={students} onAddStudent={() => setCurrentView('add-student')} onViewStudents={() => setCurrentView('students')} />;
       case 'students':
-        return <StudentsListView onAddStudent={() => setCurrentView('add-student')} />;
+        return <StudentsListView students={students} onAddStudent={() => setCurrentView('add-student')} />;
       case 'add-student':
         return <AddStudentView onCancel={() => setCurrentView('students')} onSave={() => setCurrentView('students')} />;
       default:
-        return <DashboardView onAddStudent={() => setCurrentView('add-student')} onViewStudents={() => setCurrentView('students')} />;
+        return <DashboardView students={students} onAddStudent={() => setCurrentView('add-student')} onViewStudents={() => setCurrentView('students')} />;
     }
   };
 
@@ -175,7 +176,9 @@ function SidebarLink({ icon, label, active, onClick }: { icon: React.ReactNode, 
   );
 }
 
-function DashboardView({ onAddStudent, onViewStudents }: { onAddStudent: () => void, onViewStudents: () => void }) {
+function DashboardView({ students, onAddStudent, onViewStudents }: { students: Student[], onAddStudent: () => void, onViewStudents: () => void }) {
+  const recentStudents = students.slice(0, 5);
+
   return (
     <div className="space-y-8">
       <div className="space-y-1">
@@ -188,7 +191,7 @@ function DashboardView({ onAddStudent, onViewStudents }: { onAddStudent: () => v
         <div className="md:col-span-6 bg-brand-blue-dark text-white p-8 rounded-2xl shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[220px]">
           <div className="relative z-10">
             <p className="text-blue-200 text-sm font-medium uppercase tracking-wider mb-2">Total Students</p>
-            <h2 className="text-6xl font-extrabold">156</h2>
+            <h2 className="text-6xl font-extrabold">{students.length}</h2>
           </div>
           <div className="relative z-10 flex items-center gap-2 mt-4 text-sm font-medium">
             <div className="bg-white/20 p-1 rounded-full">
@@ -241,7 +244,7 @@ function DashboardView({ onAddStudent, onViewStudents }: { onAddStudent: () => v
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {MOCK_STUDENTS.slice(0, 5).map((student) => (
+                {recentStudents.map((student) => (
                   <tr key={student.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-blue-100 text-brand-blue flex items-center justify-center text-xs font-bold">
@@ -300,7 +303,7 @@ function DashboardView({ onAddStudent, onViewStudents }: { onAddStudent: () => v
   );
 }
 
-function StudentsListView({ onAddStudent }: { onAddStudent: () => void }) {
+function StudentsListView({ students, onAddStudent }: { students: Student[], onAddStudent: () => void }) {
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -338,7 +341,7 @@ function StudentsListView({ onAddStudent }: { onAddStudent: () => void }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
-              {MOCK_STUDENTS.map(student => (
+              {students.map(student => (
                 <tr key={student.id} className="hover:bg-slate-50 transition-colors group">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
@@ -371,7 +374,7 @@ function StudentsListView({ onAddStudent }: { onAddStudent: () => void }) {
         
         {/* Pagination */}
         <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-sm text-slate-400">Showing 1 to 5 of 124 students</p>
+          <p className="text-sm text-slate-400">Showing 1 to 5 of {students.length} students</p>
           <div className="flex gap-1">
             <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-white transition-all"><ChevronLeft size={16} /></button>
             <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-brand-blue text-white font-bold text-sm">1</button>
