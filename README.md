@@ -163,7 +163,7 @@ PORT=5000
 # Project Objective
 
 The objective of this project is to simplify student record management using a web-based admin portal. Administrators can efficiently perform CRUD operations and manage student information through a user-friendly interface.
-
+to all
 ---
 
 # Conclusion
